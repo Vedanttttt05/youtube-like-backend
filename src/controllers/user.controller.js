@@ -25,9 +25,12 @@ const generateAccessandRefreshTokens = async(user) => {
 
 const registerUser = asyncHandler(async (req, res ) => {
 
-  const {fullName , email , username , password} = req.body
+    let { fullName, email, username, password } = req.body
+  fullName = fullName?.trim();
+  email = email?.trim()?.toLowerCase();
+  username = username?.trim()?.toLowerCase();
   
-  if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
+  if ([fullName, email, username, password].some((field) => !field)) {
     throw new apiError(400, "All fields are required");
   }
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -63,7 +66,7 @@ const registerUser = asyncHandler(async (req, res ) => {
         coverImage : coverImage?.secure_url||"",
         coverImagePublicId: coverImage?.public_id || "",
         email,
-        username : username.toLowerCase(),
+        username : username,
         password
     })
 
@@ -79,10 +82,12 @@ const registerUser = asyncHandler(async (req, res ) => {
 
 const loginUser = asyncHandler(async (req,res) =>{
 
-  const{email, username , password} = req.body;
+  let {email, username, password} = req.body;
+  email = email?.trim()?.toLowerCase();
+  username = username?.trim()?.toLowerCase();
 
-  if(!email && !username){
-    throw new apiError (400 , "Email or username is required");
+  if((!email && !username ) || !password){
+    throw new apiError (400 , "Email or username and password are required");
   } 
 
 const user = await User.findOne({ $or: [{ email }, { username }] });
