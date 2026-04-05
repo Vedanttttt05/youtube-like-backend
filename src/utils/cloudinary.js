@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import fs from "fs/promises";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -9,24 +9,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
-
 const uploadToCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
+
     const result = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
       folder: process.env.CLOUDINARY_FOLDER_NAME,
     });
-    if (fs.existsSync(localFilePath)) {
-      fs.unlinkSync(localFilePath);
-    }
+
+    await fs.unlink(localFilePath).catch(() => {}); // delete safely
+
     return result;
+
   } catch (error) {
     console.error("Cloudinary Upload Error:", error);
-    if (fs.existsSync(localFilePath)) {
-      fs.unlinkSync(localFilePath);
-    }
+
+    await fs.unlink(localFilePath).catch(() => {});
+
     return null;
   }
 };
