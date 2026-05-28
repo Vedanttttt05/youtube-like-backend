@@ -1,9 +1,9 @@
-import express from "express";
+import express, { Application } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
 
-const app = express();
+const app: Application = express();
 
 
 app.use(cors({
@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 //routes 
 import userRouter from "./routes/user.routes";
-import healthcheckRouter from "./routes/healthcheck..routes"
+import healthcheckRouter from "./routes/healthcheck.routes"
 import tweetRouter from "./routes/tweet.routes"
 import subscriptionRouter from "./routes/subscription.routes"
 import videoRouter from "./routes/video.routes"
