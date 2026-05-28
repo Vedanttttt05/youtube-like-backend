@@ -4,10 +4,10 @@ import {
     deleteComment,
     getVideoComments,
     updateComment,
-} from "../controllers/comment.controller.js"
-import {verifyJwt} from "../middlewares/auth.middleware.js"
-import {verifyOwnership} from "../middlewares/ownership.middleware.js"
-import {Comment} from "../models/comment.model.js"
+} from "../controllers/comment.controller"
+import {verifyJwt} from "../middlewares/auth.middleware"
+import {verifyOwnership} from "../middlewares/ownership.middleware"
+import {Comment} from "../models/comment.model"
 
 
 const router = Router();

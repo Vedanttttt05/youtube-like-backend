@@ -4,10 +4,10 @@ import {
     deleteTweet,
     getUserTweets,
     updateTweet,
-} from "../controllers/tweet.controller.js"
-import { verifyOwnership } from "../middlewares/ownership.middleware.js";
-import { Tweet } from "../models/tweet.model.js";
-import {verifyJwt} from "../middlewares/auth.middleware.js"
+} from "../controllers/tweet.controller"
+import { verifyOwnership } from "../middlewares/ownership.middleware";
+import { Tweet } from "../models/tweet.model";
+import {verifyJwt} from "../middlewares/auth.middleware"
 
 const router = Router();
 router.use(verifyJwt); 

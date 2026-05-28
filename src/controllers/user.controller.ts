@@ -1,8 +1,8 @@
-import {asyncHandler} from '../utils/asyncHandler.js';
-import apiError from '../utils/apiError.js';
-import { User } from '../models/user.model.js';
-import { uploadToCloudinary } from '../utils/cloudinary.js';
-import  apiResponse  from '../utils/apiResponse.js';
+import {asyncHandler} from '../utils/asyncHandler';
+import apiError from '../utils/apiError';
+import { User } from '../models/user.model';
+import { uploadToCloudinary } from '../utils/cloudinary';
+import  apiResponse  from '../utils/apiResponse';
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 

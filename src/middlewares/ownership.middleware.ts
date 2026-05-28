@@ -1,5 +1,5 @@
-import {asyncHandler} from "../utils/asyncHandler.js";
-import ApiError from "../utils/apiError.js"
+import {asyncHandler} from "../utils/asyncHandler";
+import ApiError from "../utils/apiError"
 
 export const verifyOwnership = (Model) =>
     asyncHandler(async (req, res, next) => {

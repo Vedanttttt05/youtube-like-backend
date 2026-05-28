@@ -3,9 +3,9 @@ import { registerUser , loginUser ,
    logOutUser , refreshAccessToken  ,
     changePassword , getCurrentUser ,
      updateDetails , updateAvatar ,
-      updateCoverImage , getUserChannelProfile , getWatchHistory} from "../controllers/user.controller.js";
-import {upload} from  "../middlewares/multer.middleware.js"
-import { verifyJwt } from "../middlewares/auth.middleware.js";
+      updateCoverImage , getUserChannelProfile , getWatchHistory} from "../controllers/user.controller";
+import {upload} from  "../middlewares/multer.middleware"
+import { verifyJwt } from "../middlewares/auth.middleware";
 
 const userRouter = Router();
 
