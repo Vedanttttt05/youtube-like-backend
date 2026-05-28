@@ -125,9 +125,6 @@ const logOutUser  = asyncHandler(async (req,res) => {
      req.user._id,
     {
       $set: { refreshToken: undefined  }
-    },
-    {
-      new: true,
     }
     
   )
@@ -178,7 +175,14 @@ const refreshAccessToken = asyncHandler (async (req,res) => {
 const changePassword = asyncHandler (async (req,res) => {
   const { currentPassword , newPassword } = req.body;
 
+  if (!currentPassword || !newPassword) {
+  throw new apiError(400, "Current password and new password are required");
+}
+
   const user = await User.findById(req.user._id)
+  if (currentPassword === newPassword) {
+  throw new apiError(400, "New password must be different from current password");
+}
   const isPasswordCorrect = await user.comparePassword(currentPassword)
 
   if (!isPasswordCorrect) {
@@ -186,7 +190,7 @@ const changePassword = asyncHandler (async (req,res) => {
   }
 
   user.password = newPassword;
-  await user.save({validateBeforeSave : false});
+  await user.save();
   return res.status(200).json (new apiResponse (200 , {} , "Password changed successfully"))
 });
 
@@ -198,7 +202,10 @@ const getCurrentUser = asyncHandler(async (req,res) => {
 
 
 const updateDetails = asyncHandler(async (req, res) => {
-  const { fullName, email, username } = req.body;
+  let { fullName, email, username } = req.body;
+  fullName = fullName?.trim();
+  email = email?.trim()?.toLowerCase();
+  username = username?.trim()?.toLowerCase();
 
   if ([fullName, email, username].some(field => typeof field !== "string" || field.trim() === "")) {
     throw new apiError(400, "All fields are required");
@@ -213,10 +220,8 @@ const updateDetails = asyncHandler(async (req, res) => {
     throw new apiError(409, "Email is already in use");
   }
 
-  const normalizedUsername = username.toLowerCase();
-
   const usernameExists = await User.findOne({
-    username: normalizedUsername,
+    username: username,
     _id: { $ne: req.user._id }
   });
 
@@ -230,7 +235,7 @@ const updateDetails = asyncHandler(async (req, res) => {
       $set: {
         fullName,
         email,
-        username: normalizedUsername
+        username
       }
     },
     {
