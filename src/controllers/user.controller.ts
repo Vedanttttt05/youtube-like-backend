@@ -5,8 +5,12 @@ import { uploadToCloudinary } from '../utils/cloudinary';
 import  apiResponse  from '../utils/apiResponse';
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
+import { Request, Response } from "express";
+import { RegisterUserBody } from "../types/dtos/user.dto";
+import { UserFiles } from "../types/files/user.files";
 
-const generateAccessandRefreshTokens = async(user) => {
+
+const generateAccessandRefreshTokens = async(user: any) => {
   try {
     const refreshToken = user.generateRefreshToken();
     const accessToken = user.generateAccessToken();
@@ -23,9 +27,11 @@ const generateAccessandRefreshTokens = async(user) => {
 
 }
 
-const registerUser = asyncHandler(async (req, res ) => {
+const registerUser = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+  const body = req.body as RegisterUserBody;
 
-    let { fullName, email, username, password } = req.body
+    let { fullName, email, username, password } = body
   fullName = fullName?.trim();
   email = email?.trim()?.toLowerCase();
   username = username?.trim()?.toLowerCase();
@@ -39,12 +45,14 @@ const registerUser = asyncHandler(async (req, res ) => {
     throw new apiError(409, "User with given email or username already exists");
   }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;  
+const files = req.files as UserFiles;
 
-    let coverImageLocalPath;
+    const avatarLocalPath = files?.avatar?.[0]?.path;  
 
-    if (req.files?.coverImage) {
-      coverImageLocalPath = req.files.coverImage[0].path;
+    let coverImageLocalPath : string  | undefined;
+
+    if (files?.coverImage) {
+      coverImageLocalPath = files.coverImage[0].path;
     }
 
     if (!avatarLocalPath ) {
@@ -77,7 +85,8 @@ const registerUser = asyncHandler(async (req, res ) => {
     if(!createdUser){
         throw new apiError (500 , "Error creating user")
     }
-    return res.status(201).json(new apiResponse(201 , "User registered successfully" , createdUser));
+    
+    res.status(201).json(new apiResponse(201 , "User registered successfully" , createdUser));
 });
 
 const loginUser = asyncHandler(async (req,res) =>{
