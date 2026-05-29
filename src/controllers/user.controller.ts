@@ -5,8 +5,8 @@ import { uploadToCloudinary } from '../utils/cloudinary';
 import  apiResponse  from '../utils/apiResponse';
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
-import { Request, Response } from "express";
-import { RegisterUserBody } from "../types/dtos/user.dto";
+import { Request, Response , CookieOptions } from "express";
+import { RegisterUserBody  , LoginUserBody } from "../types/dtos/user.dto";
 import { UserFiles } from "../types/files/user.files";
 
 
@@ -26,6 +26,7 @@ const generateAccessandRefreshTokens = async(user: any) => {
   }
 
 }
+
 
 const registerUser = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -89,11 +90,12 @@ const files = req.files as UserFiles;
     res.status(201).json(new apiResponse(201 , "User registered successfully" , createdUser));
 });
 
-const loginUser = asyncHandler(async (req,res) =>{
-
-  let {email, username, password} = req.body;
-  email = email?.trim()?.toLowerCase();
-  username = username?.trim()?.toLowerCase();
+const loginUser = asyncHandler( 
+  async (req: Request, res: Response): Promise<void> =>{
+  const body = req.body as LoginUserBody;  
+  let {email, username, password} = body;
+  email = email?.trim().toLowerCase();
+  username = username?.trim().toLowerCase();
 
   if((!email && !username ) || !password){
     throw new apiError (400 , "Email or username and password are required");
@@ -114,12 +116,11 @@ const { accessToken, refreshToken } = await generateAccessandRefreshTokens(user)
 
 const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-const options = {
+const options : CookieOptions = {
   httpOnly: true,
   secure : true,
-
 }
-return res.status(200).cookie("accessToken" , accessToken , options)
+res.status(200).cookie("accessToken" , accessToken , options)
 .cookie("refreshToken" , refreshToken , options)
 .json(new apiResponse(200 , {
   user : loggedInUser, accessToken, refreshToken
